@@ -4,8 +4,8 @@ WORKDIR /app
 COPY . /app
 
 # RUN apt update -y && apt install awscli -y 
-RUN pip install awscli
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple awscli \
+    && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
-RUN pip install -r requirements.txt
 
-CMD [ "python","app.py" ]
+CMD [ "python3","app.py" ]
