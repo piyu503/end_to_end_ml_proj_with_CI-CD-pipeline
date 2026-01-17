@@ -50,19 +50,17 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         
       - name: Build, tag, and push image to Amazon ECR
-        id: build-image
         env:
-          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: ${{github.sha}}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
-        
+          export DOCKER_BUILDKIT=0
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
 
   Continuous-Deployment:
     needs: build-and-push-ecr-image
